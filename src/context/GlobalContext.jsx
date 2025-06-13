@@ -1,21 +1,13 @@
 import { createContext } from "react";
-import { useState, useEffect } from "react";
-const URL_API_BE = import.meta.env.VITE_URL_API_BE || "http://localhost:3001";
+import useTask from "../hooks/useTasks";
 
 export const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
-  const [tasks, setTasks] = useState([]);
-
-  useEffect(() => {
-    fetch(`${URL_API_BE}/tasks`)
-      .then((response) => response.json())
-      .then((data) => setTasks(data))
-      .catch((error) => console.error("Error fetching tasks:", error));
-  }, []);
+  const taskData = useTask();
 
   return (
-    <GlobalContext.Provider value={{ tasks, setTasks }}>
+    <GlobalContext.Provider value={{ ...taskData }}>
       {children}
     </GlobalContext.Provider>
   );
