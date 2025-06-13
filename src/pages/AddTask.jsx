@@ -1,10 +1,12 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useContext } from "react";
+import { GlobalContext } from "../context/GlobalContext.jsx";
+import useTasks from "../hooks/useTasks.js";
 
 export default function AddTask() {
   const [taskTitle, setTaskTitle] = useState("");
   const taskDescriptionRef = useRef("");
   const taskStatusRef = useRef("To do");
-
+  const { addTask } = useContext(GlobalContext);
   const symbols = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/`~";
 
   const taskTitleError = useMemo(() => {
@@ -16,22 +18,36 @@ export default function AddTask() {
     }
     return "";
   }, [taskTitle]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (taskTitleError) {
+      alert("Per favore, correggi gli errori nel form.");
+      return;
+    }
+    const newTask = {
+      title: taskTitle.trim(),
+      description: taskDescriptionRef.current.value,
+      status: taskStatusRef.current.value,
+    };
+    try {
+      await addTask(newTask);
+      alert("Task aggiunta con successo!");
+      setTaskTitle("");
+      taskDescriptionRef.current.value = "";
+      taskStatusRef.current.value = "To do";
+    } catch (error) {
+      alert(`Errore durante l'aggiunta della task: ${error.message}`);
+      return;
+    }
+  };
+
   return (
     <div>
       <h1>Aggiungi una Task</h1>
       <form
         onSubmit={(e) => {
-          e.preventDefault();
-          if (taskTitleError) {
-            alert("Per favore, correggi gli errori nel form.");
-            return;
-          }
-          const newTask = {
-            title: taskTitle.trim(),
-            description: taskDescriptionRef.current.value,
-            status: taskStatusRef.current.value,
-          };
-          console.log(newTask);
+          handleSubmit(e);
         }}
       >
         <label>
@@ -65,8 +81,3 @@ export default function AddTask() {
     </div>
   );
 }
-
-// 📌 Milestone 5 - Creazione del Form per Aggiungere un Task
-// Creare un form per aggiungere un task, senza ancora inviare i dati all'API.
-
-// Al click del bottone "Aggiungi Task", il form deve SOLO stampare in console l’oggetto task con i valori inseriti (NON deve ancora essere inviata la richiesta all’API).
