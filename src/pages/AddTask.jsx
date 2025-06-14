@@ -1,6 +1,5 @@
 import { useState, useRef, useMemo, useContext } from "react";
 import { GlobalContext } from "../context/GlobalContext.jsx";
-import useTasks from "../hooks/useTasks.js";
 
 export default function AddTask() {
   const [taskTitle, setTaskTitle] = useState("");

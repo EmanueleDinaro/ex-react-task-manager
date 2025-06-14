@@ -12,6 +12,7 @@ export default function useTask() {
       .catch((error) => console.error("Error fetching tasks:", error));
   }, []);
 
+  // Funzione per aggiungere una nuova task
   const addTask = async (newTask) => {
     const response = await fetch(`${URL_API_BE}/tasks`, {
       method: "POST",
@@ -24,24 +25,34 @@ export default function useTask() {
     }
     setTasks((prev) => [...prev, task]);
   };
-  const removeTask = (taskId) => {
-    fetch(`${URL_API_BE}/tasks/${taskId}`, {
+
+  // Funzione per rimuovere una task
+  const removeTask = async (taskId) => {
+    const response = await fetch(`${URL_API_BE}/tasks/${taskId}`, {
       method: "DELETE",
-    })
-      .then((response) => response.json())
-      .then(({ success, message }) => {
-        if (!success) {
-          throw new Error(message);
-        }
-        setTasks((prev) => prev.filter((task) => task.id !== taskId));
-      })
-      .catch((error) => {
-        throw new Error(
-          `Errore durante l'eliminazione della task: ${error.message}`
-        );
-      });
+    });
+    const { success, message } = await response.json();
+    if (!success) {
+      throw new Error(message);
+    }
+    setTasks((prev) => prev.filter((task) => task.id !== taskId));
   };
 
-  const updateTask = () => {};
+  // Funzione per aggiornare una task
+  const updateTask = async (updatedTask) => {
+    const response = await fetch(`${URL_API_BE}/tasks/${updatedTask.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedTask),
+    });
+    const { success, message, task: newTask } = await response.json();
+    if (!success) {
+      throw new Error(message);
+    }
+    setTasks((prev) =>
+      prev.map((oldTask) => (oldTask.id === newTask.id ? newTask : oldTask))
+    );
+  };
+
   return { tasks, addTask, removeTask, updateTask };
 }
