@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import AddTask from "../pages/AddTask";
-const URL_API_BE = import.meta.env.VITE_URL_API_BE || "http://localhost:3001";
+
+const URL_API_BE = import.meta.env.VITE_URL_API_BE;
 
 export default function useTask() {
   const [tasks, setTasks] = useState([]);
@@ -24,7 +24,24 @@ export default function useTask() {
     }
     setTasks((prev) => [...prev, task]);
   };
-  const removeTask = (taskId) => {};
+  const removeTask = (taskId) => {
+    fetch(`${URL_API_BE}/tasks/${taskId}`, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then(({ success, message }) => {
+        if (!success) {
+          throw new Error(message);
+        }
+        setTasks((prev) => prev.filter((task) => task.id !== taskId));
+      })
+      .catch((error) => {
+        throw new Error(
+          `Errore durante l'eliminazione della task: ${error.message}`
+        );
+      });
+  };
+
   const updateTask = () => {};
   return { tasks, addTask, removeTask, updateTask };
 }

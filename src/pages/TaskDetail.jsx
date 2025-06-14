@@ -1,18 +1,30 @@
-// Creare TaskDetail.jsx per mostrare:
-// Nome (title)
-// Descrizione (description)
-// Stato (status)
-// Data di creazione (createdAt)
-// Un bottone "Elimina Task", che per ora stampa solo "Elimino task" in console.
 import { useParams } from "react-router";
 import { useContext } from "react";
 import { GlobalContext } from "../context/GlobalContext.jsx";
+const URL_API_BE = import.meta.env.VITE_URL_API_BE;
 
 export default function TaskDetail() {
   const { id } = useParams();
   const { tasks } = useContext(GlobalContext);
 
   const task = tasks.find((task) => task.id === parseInt(id));
+
+  const removeTask = (taskId) => {
+    fetch(`${URL_API_BE}/tasks/${taskId}`, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then(({ success, message }) => {
+        if (!success) {
+          throw new Error(message);
+        }
+        alert("Task eliminata con successo!");
+        window.location.href = "/";
+      })
+      .catch((error) => {
+        alert(`Errore durante l'eliminazione della task: ${error.message}`);
+      });
+  };
 
   if (!task) {
     return <h2>Task non trovata.</h2>;
@@ -35,9 +47,7 @@ export default function TaskDetail() {
         {new Date(task.createdAt).toLocaleDateString()}
       </p>
       <button>
-        <span onClick={() => console.log("Elimino task", task.id)}>
-          Elimina
-        </span>
+        <span onClick={() => removeTask(task.id)}>Elimina</span>
       </button>
     </div>
   );
