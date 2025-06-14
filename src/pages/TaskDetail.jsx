@@ -1,11 +1,16 @@
 import { useParams } from "react-router";
 import { useContext } from "react";
 import { GlobalContext } from "../context/GlobalContext.jsx";
+import { useState } from "react";
+
+import Modal from "../components/Modal.jsx";
+
 const URL_API_BE = import.meta.env.VITE_URL_API_BE;
 
 export default function TaskDetail() {
   const { id } = useParams();
   const { tasks } = useContext(GlobalContext);
+  const [showModal, setShowModal] = useState(false);
 
   const task = tasks.find((task) => task.id === parseInt(id));
 
@@ -46,9 +51,15 @@ export default function TaskDetail() {
         <strong>Data di creazione:</strong>{" "}
         {new Date(task.createdAt).toLocaleDateString()}
       </p>
-      <button>
-        <span onClick={() => removeTask(task.id)}>Elimina</span>
-      </button>
+      <button onClick={() => setShowModal(true)}>Elimina Task</button>
+      <Modal
+        title="Conferma Eliminazione"
+        content={`Sei sicuro di voler eliminare la task "${task.title}"?`}
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onConfirm={() => removeTask(task.id)}
+        confirmText="Elimina"
+      ></Modal>
     </div>
   );
 }
