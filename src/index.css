@@ -1,36 +1,40 @@
+/* Reset base */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Navbar */
+/* Typography */
+body {
+  font-family: "Segoe UI", sans-serif;
+  color: #333333;
+  background-color: #fafafa;
+  line-height: 1.5;
+}
+
+/* Header e Navbar */
 header {
   background-color: #282c34;
-  color: white;
+  color: #ffffff;
   padding: 16px;
   text-align: center;
 }
 
 nav ul {
   list-style: none;
-  padding: 0;
-  margin: 16px 0 0 0;
   display: flex;
   justify-content: center;
   gap: 16px;
-}
-
-nav ul li {
-  display: inline;
+  margin-top: 16px;
 }
 
 nav a {
-  color: white;
+  color: #ffffff;
   text-decoration: none;
   font-weight: bold;
   padding: 8px 16px;
-  border-radius: 5px;
+  border-radius: 6px;
   transition: background-color 0.2s;
 }
 
@@ -38,18 +42,19 @@ nav a:hover {
   background-color: #3a3f47;
 }
 
-/* Main content area */
+/* Main */
 main {
   padding: 32px;
 }
 
+/* Tabella */
 table {
   width: 100%;
-  margin: 32px 0;
-  font-size: 16px;
-  font-family: sans-serif;
-  border: 1px solid #ddd;
+  margin-top: 32px;
   border-collapse: collapse;
+  font-size: 16px;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
 }
 
 thead {
@@ -58,52 +63,60 @@ thead {
 
 th,
 td {
-  text-align: left;
   padding: 12px 16px;
-  border-bottom: 1px solid #ddd;
-  border-left: 1px solid #ddd;
+  text-align: left;
+  border-bottom: 1px solid #dddddd;
+}
+
+td a {
+  color: #000;
+  text-decoration: none;
+}
+
+th {
+  font-weight: 600;
+  color: #333333;
+  cursor: pointer;
+}
+
+td {
+  color: #555555;
 }
 
 tr:hover {
   background-color: #f9f9f9;
 }
 
-th {
-  color: #333;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-td {
-  color: #555;
-}
-
 td.todo {
-  background-color: #ffabab;
-}
-td.doing {
-  background-color: #ffffab;
-}
-td.done {
-  background-color: #8bdb8b;
+  background-color: #cf6969;
+  color: #000;
 }
 
+td.doing {
+  background-color: #e7e56f;
+  color: #000;
+}
+
+td.done {
+  background-color: #85dd85;
+  color: #000;
+}
+
+/* Form */
 form {
   max-width: 600px;
   margin: 32px auto;
   padding: 32px;
-  background-color: #f8f8f8;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
   border-radius: 12px;
-  font-family: sans-serif;
-  border: 1px solid #ddd;
 }
 
-form label:not(:first-child) {
+form label {
   display: block;
-  color: #333;
+  margin-bottom: 8px;
   font-weight: 500;
-  margin-top: 16px;
-  margin-bottom: 16px;
+  color: #333333;
 }
 
 form input[type="text"],
@@ -111,9 +124,10 @@ form textarea,
 form select {
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
   font-size: 16px;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  margin-bottom: 24px;
   font-family: inherit;
 }
 
@@ -122,6 +136,7 @@ form textarea {
   resize: vertical;
 }
 
+/* Buttons */
 button {
   background-color: #4a90e2;
   color: white;
@@ -131,6 +146,7 @@ button {
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
+  transition: background-color 0.2s;
   margin-top: 16px;
   margin-right: 16px;
 }
@@ -140,11 +156,28 @@ button:hover {
 }
 
 button:disabled {
-  background-color: #ccc;
+  background-color: #cccccc;
+  color: #666666;
   cursor: not-allowed;
-  color: #666;
 }
 
+/* Input search */
+input[type="text"]::placeholder {
+  color: #999999;
+}
+
+input[type="text"] {
+  width: 100%;
+  margin: 16px 0px 0px 0px;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  outline: none;
+  display: block;
+}
+
+/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -159,26 +192,25 @@ button:disabled {
 }
 
 .modal-content {
-  background-color: white;
+  background-color: #ffffff;
   padding: 32px;
   border-radius: 12px;
   max-width: 500px;
   width: 90%;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.25);
   text-align: center;
-  font-family: sans-serif;
 }
 
 .modal-content h2 {
   margin-bottom: 16px;
   font-size: 24px;
-  color: #333;
+  color: #333333;
 }
 
 .modal-content p {
   margin-bottom: 24px;
   font-size: 16px;
-  color: #555;
+  color: #555555;
 }
 
 .modal-buttons {
@@ -187,23 +219,13 @@ button:disabled {
   gap: 16px;
 }
 
-.modal-buttons button {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
 .modal-buttons button:first-child {
-  background-color: #ccc;
-  color: #333;
+  background-color: #cccccc;
+  color: #333333;
 }
 
 .modal-buttons button:first-child:hover {
-  background-color: #bbb;
+  background-color: #bbbbbb;
 }
 
 .modal-buttons button:last-child {
@@ -218,9 +240,9 @@ button:disabled {
 /* Footer */
 footer {
   background-color: #f1f1f1;
-  color: #333;
+  color: #333333;
   text-align: center;
   padding: 16px;
   font-size: 14px;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #dddddd;
 }

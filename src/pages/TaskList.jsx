@@ -1,10 +1,22 @@
-import { useContext, useState, useMemo } from "react";
+import { useContext, useState, useMemo, useCallback } from "react";
 import { GlobalContext } from "../context/GlobalContext.jsx";
 import TaskRow from "../components/TaskRow.jsx";
+
+function debounce(callback, delay) {
+  let timer;
+  return (value) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      callback(value);
+    }, delay);
+  };
+}
 
 export default function TaskList() {
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const debounceSearch = useCallback(debounce(setSearchQuery, 500), []);
 
   const { tasks } = useContext(GlobalContext);
 
@@ -19,30 +31,43 @@ export default function TaskList() {
     }
   };
 
-  const sortedTasks = useMemo(() => {
-    return [...tasks].sort((a, b) => {
-      if (sortBy === "title") {
-        return a.title.localeCompare(b.title) * sortOrder;
-      } else if (sortBy === "status") {
-        const statusOrder = {
-          "To do": 0,
-          Doing: 1,
-          Done: 2,
-        };
-        return (statusOrder[a.status] - statusOrder[b.status]) * sortOrder;
-      } else if (sortBy === "createdAt") {
+  const filteredAndSortedTask = useMemo(() => {
+    return [...tasks]
+      .filter((task) => {
         return (
-          (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) *
-          sortOrder
+          task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          task.status.toLowerCase().includes(searchQuery.toLowerCase())
         );
-      }
-      return 0;
-    });
-  }, [tasks, sortBy, sortOrder]);
+      })
+      .sort((a, b) => {
+        if (sortBy === "title") {
+          return a.title.localeCompare(b.title) * sortOrder;
+        } else if (sortBy === "status") {
+          const statusOrder = {
+            "To do": 0,
+            Doing: 1,
+            Done: 2,
+          };
+          return (statusOrder[a.status] - statusOrder[b.status]) * sortOrder;
+        } else if (sortBy === "createdAt") {
+          return (
+            (new Date(a.createdAt).getTime() -
+              new Date(b.createdAt).getTime()) *
+            sortOrder
+          );
+        }
+        return 0;
+      });
+  }, [tasks, sortBy, sortOrder, searchQuery]);
 
   return (
     <div>
       <h1>Pagina delle task</h1>
+      <input
+        type="text"
+        placeholder="Cerca task..."
+        onChange={(e) => debounceSearch(e.target.value)}
+      />
       <table>
         <thead>
           <tr>
@@ -58,7 +83,7 @@ export default function TaskList() {
           </tr>
         </thead>
         <tbody>
-          {sortedTasks.map((task) => (
+          {filteredAndSortedTask.map((task) => (
             <TaskRow key={task.id} task={task} />
           ))}
         </tbody>
@@ -66,9 +91,7 @@ export default function TaskList() {
     </div>
   );
 }
-
-// Implementare la logica di ordinamento con useMemo(), in modo che l’array ordinato venga ricalcolato solo quando cambiano tasks, sortBy o sortOrder:
-// Ordinamento per title → alfabetico (localeCompare).
-// Ordinamento per status → ordine predefinito: "To do" < "Doing" < "Done".
-// Ordinamento per createdAt → confrontando il valore numerico della data (.getTime()).
-// Applicare sortOrder per definire se l’ordine è crescente o decrescente.
+// Modificare l'useMemo() per filtrare e ordinare i task
+// Applicare il filtraggio basato su searchQuery.
+// La ricerca deve essere case insensitive.
+// Ordinare i risultati in base ai criteri esistenti (es. nome, stato, data di creazione).
